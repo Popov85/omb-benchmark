@@ -1,50 +1,62 @@
-# Fork of the OpenMessaging Benchmark Framework that uses sapmachine 17 docker image
+# Fork of the OpenMessaging Benchmark Framework for Popov R&D experiments
 
-This fork is used to update the outdated offical docker hub image openmessaging/openmessaging-benchmark with sapmachine:17.
-Find more in [./docker/README.md](./docker/README.md).
+This repository is a research-oriented *fork* of the [**OpenMessaging Benchmark (OMB)*** framework](https://github.com/openmessaging/benchmark), used in Popov R&D to study real-world performance and architectural trade-offs of streaming and messaging systems (RabbitMQ, ActiveMQ Artemis, Kafka-like semantics, etc.).
 
-[![Build](https://github.com/openmessaging/benchmark/actions/workflows/pr-build-and-test.yml/badge.svg)](https://github.com/openmessaging/benchmark/actions/workflows/pr-build-and-test.yml)
-[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+## What is OMB?
 
-**Notice：** We do not consider or plan to release any unilateral test results based on this standard. For reference, you can purchase server tests on the cloud by yourself.
+OMB is an open-source, JVM-based benchmarking framework designed to measure end-to-end behavior across different brokers and protocols.
 
-This repository houses user-friendly, cloud-ready benchmarking suites for the following messaging platforms:
+## Packaging
 
-* [Apache ActiveMQ Artemis](https://activemq.apache.org/components/artemis/)
-* [Apache Bookkeeper](https://bookkeeper.apache.org)
-* [Apache Kafka](https://kafka.apache.org)
-* [Apache Pulsar](https://pulsar.apache.org)
-* [Apache RocketMQ](https://rocketmq.apache.org)
-* Generic [JMS](https://javaee.github.io/jms-spec/)
-* [KoP (Kafka-on-Pulsar)](https://github.com/streamnative/kop)
-* [NATS JetStream](https://docs.nats.io/nats-concepts/jetstream)
-* [NATS Streaming (STAN)](https://docs.nats.io/legacy/stan/intro)
-* [NSQ](https://nsq.io)
-* [Pravega](https://pravega.io/)
-* [RabbitMQ](https://www.rabbitmq.com/)
-* [Redis](https://redis.com/)
+OMB is built with Maven and produces a runnable distribution.
 
-> More details could be found at the [official documentation](http://openmessaging.cloud/docs/benchmarks/).
+> mvn clean package -DskipTests
 
-## Build
+Artifacts are generated under:
 
-Requirements:
+*openmessaging-benchmark/package/target/*
 
-* JDK 17
-* Maven 3.8.6+
+This folder contains an archive:
 
-Common build actions:
+*openmessaging-benchmark-0.0.1-SNAPSHOT-bin.tar.gz*
 
-|             Action              |                 Command                  |
-|---------------------------------|------------------------------------------|
-| Full build and test             | `mvn clean verify`                       |
-| Skip tests                      | `mvn clean verify -DskipTests`           |
-| Skip Jacoco test coverage check | `mvn clean verify -Djacoco.skip`         |
-| Skip Checkstyle standards check | `mvn clean verify -Dcheckstyle.skip`     |
-| Skip Spotless formatting check  | `mvn clean verify -Dspotless.check.skip` |
-| Format code                     | `mvn spotless:apply`                     |
-| Generate license headers        | `mvn license:format`                     |
+You just extract the content of this archive in any working dir.
 
-## License
+Once extracted, you will see *bin/* folder containing several bash scripts:
 
-Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+- **benchmark**: bash script that launches a coordinator process;
+- **benchmark-worker**: bash script that launches an execution engine process.
+
+## Launching
+
+Benchmark is launched as a JVM coordinator process with two YAML config files passed as startup params:
+
+- **Driver**: config. defining the target system (system-specific settings: url address, credentials, etc.);
+- **Workload**: config. describing the benchmark scenario (system-agnostic params: producers, topics, consumers, rates, duration).
+
+Based on these configs, OMB orchestrates producers and consumers, controls publish rates and payload sizes, and collects metrics such as throughput and latency throughout the run.
+
+Generalized benchmark launch command looks like this:
+
+```
+./bin/benchmark \
+--drivers <driver-path>[,<driver-path>...] \
+[--workers <worker-url>[,<worker-url>...]] \
+<workload-path> [<workload-path>...]
+```
+
+where:
+
+- -- drivers defines comma separated list of systems being benchmarked sequentially;
+- -- workers [optional] defines a comma separated list of separately deployable workers URLs.
+- workload-path(s) define a whitespace-separated list of workload files paths.
+
+## Results analysis
+
+OMB computes metrics in fixed *10-second* reporting windows. At the end of a benchmark run, these windowed statistics are aggregated and emitted as a JSON (by default) result file, stored in the directory from which the test was launched.
+
+See the next section for more detailed explanation of how to interpret the results.
+
+## Further reading
+- **Andrii Popov**: [*OpenMessaging Benchmark framework*: overview](https://blog.popov-rnd.com/posts/omb-framework);
+- **Official documentation***: [*OpenMessaging Benchmark framework*](https://openmessaging.cloud/docs/benchmarks/).
