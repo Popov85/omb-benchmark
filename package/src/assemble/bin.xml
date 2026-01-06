@@ -29,8 +29,14 @@
 	</moduleSets>
 
 	<fileSets>
-		<fileSet>
+		<!--<fileSet>
 			<directory>${basedir}/../workloads</directory>
+		</fileSet>-->
+		<fileSet>
+			<directory>${basedir}/..</directory>
+			<includes>
+				<include>workloads*/**/*</include>
+			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>${basedir}/../payload</directory>
@@ -80,8 +86,8 @@
 				the provenance of the jar -->
 			<outputFileNameMapping>${artifact.groupId}-${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
 
-			<excludes>
-				<!-- All these dependencies are already included in netty-all -->
+			<!--<excludes>
+				&lt;!&ndash; All these dependencies are already included in netty-all &ndash;&gt;
 				<exclude>io.netty:netty-common</exclude>
 				<exclude>io.netty:netty-buffer</exclude>
 				<exclude>io.netty:netty-codec-http</exclude>
@@ -96,7 +102,7 @@
 				<exclude>io.netty:netty-resolver-dns</exclude>
 				<exclude>io.netty:netty-transport-native-unix-common</exclude>
 				<exclude>ch.qos.logback:*</exclude>
-			</excludes>
+			</excludes>-->
 		</dependencySet>
 	</dependencySets>
 </assembly>
