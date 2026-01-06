@@ -46,10 +46,10 @@
             <artifactId>grpc-all</artifactId>
             <version>1.49.0</version>
         </dependency>
-        <dependency>
+       <!-- <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>io.perfmark</groupId>
             <artifactId>perfmark-api</artifactId>

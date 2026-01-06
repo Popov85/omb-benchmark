@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.Dsl;
@@ -58,7 +59,13 @@ public class HttpWorkerClient implements Worker {
     private final String host;
 
     public HttpWorkerClient(String host) {
-        this(asyncHttpClient(Dsl.config().setReadTimeout(600000).setRequestTimeout(600000)), host);
+        this(
+                asyncHttpClient(
+                        Dsl.config()
+                            .setReadTimeout(Duration.ofMinutes(10))
+                            .setRequestTimeout(Duration.ofMinutes(10))),
+                host
+        );
     }
 
     HttpWorkerClient(AsyncHttpClient httpClient, String host) {

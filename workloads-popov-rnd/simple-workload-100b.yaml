@@ -1,0 +1,103 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+# ---------------------------------------
+# Workload identification (optional)
+# ---------------------------------------
+name: "baseline-1p1c"
+
+# ---------------------------------------
+# Topology
+# ---------------------------------------
+
+# Number of topics (queues / streams / topics depending on broker)
+topics: 1
+
+# Number of partitions per topic
+# - Kafka / Pulsar: real partitions
+# - RabbitMQ: usually maps to multiple queues
+partitionsPerTopic: 1
+
+# Key distribution strategy for partition selection
+# Values:
+#   NO_KEY        → round-robin / default routing
+#   HASH_KEY      → stable hashing
+#   RANDOM_KEY    → random distribution
+keyDistributor: NO_KEY
+
+# ---------------------------------------
+# Message payload
+# ---------------------------------------
+
+# Size of each message in bytes
+messageSize: 100
+
+# Whether to randomize payload content
+# false → same payload reused (best for pure throughput)
+# true  → more realistic, slightly slower
+useRandomizedPayloads: false
+
+# Ratio of bytes in each message that are randomized (0.0–1.0)
+# Only used if useRandomizedPayloads = true
+randomBytesRatio: 0.0
+
+# Number of randomized payloads cached in memory
+# Only used if useRandomizedPayloads = true
+randomizedPayloadPoolSize: 100
+
+# Optional file containing payload data
+# Overrides messageSize if present
+payloadFile: "payload/payload-100b.data"
+
+# ---------------------------------------
+# Producers / consumers
+# ---------------------------------------
+
+# Number of subscriptions per topic
+subscriptionsPerTopic: 1
+
+# Producers per topic
+producersPerTopic: 1
+
+# Consumers per subscription
+consumerPerSubscription: 1
+
+# Producer send rate (messages per second)
+# 0 → unlimited (push as fast as possible)
+producerRate: 0
+
+# ---------------------------------------
+# Backlog / drain behavior
+# ---------------------------------------
+
+# Size of backlog (in GB) to accumulate before consumers start
+# 0 → consumers start immediately
+consumerBacklogSizeGB: 0
+
+# Fraction of backlog that must be drained for test to complete
+# 1.0 → full drain
+# 0.99 → accept 99% drained
+# 0.0 → do not wait for drain
+backlogDrainRatio: 1.0
+
+# ---------------------------------------
+# Timing
+# ---------------------------------------
+
+# Duration of measurement phase (minutes)
+testDurationMinutes: 5
+
+# Warmup phase duration (minutes, not counted in results)
+warmupDurationMinutes: 1
